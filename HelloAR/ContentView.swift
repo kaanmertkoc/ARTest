@@ -32,7 +32,10 @@ struct ARViewContainer: UIViewRepresentable {
         
         let material = SimpleMaterial(color: .blue, isMetallic: true)
         let box = ModelEntity(mesh: MeshResource.generateBox(size: 0.3), materials: [material])
-        
+
+
+        let boxShape = ShapeResource.generateBox(width: 0.3, height: 0.3, depth: 0.3)
+
         box.generateCollisionShapes(recursive: true)
         
 
