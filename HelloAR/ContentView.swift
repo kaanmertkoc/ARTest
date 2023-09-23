@@ -19,15 +19,31 @@ struct ARViewContainer: UIViewRepresentable {
     func makeUIView(context: Context) -> ARView {
         
         let arView = ARView(frame: .zero)
+        arView.addGestureRecognizer(UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap)))
+    
+        context.coordinator.view = arView
+        arView.session.delegate = context.coordinator
         
-        // Load the "Box" scene from the "Experience" Reality File
-        let boxAnchor = try! Experience.loadBox()
         
-        // Add the box anchor to the scene
-        arView.scene.anchors.append(boxAnchor)
+        
+        let anchor = AnchorEntity(.plane([.vertical, .horizontal],
+                              classification: [.wall, .floor, .ceiling],
+                               minimumBounds: [1.0, 1.0]))
+        
+        let material = SimpleMaterial(color: .blue, isMetallic: true)
+        let box = ModelEntity(mesh: MeshResource.generateBox(size: 0.3), materials: [material])
+        
+        box.generateCollisionShapes(recursive: true)
+        
+
+        anchor.addChild(box)
+        arView.scene.anchors.append(anchor)
         
         return arView
-        
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
     }
     
     func updateUIView(_ uiView: ARView, context: Context) {}
